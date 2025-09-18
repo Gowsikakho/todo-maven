@@ -46,6 +46,25 @@ public class TodoAppDAO {
             }
         }
     }
+   public void updateTodo(Todo todo) throws SQLException {
+        String sql = "UPDATE todos SET title = ?, description = ?, completed = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+
+        try (Connection conn = new DatabaseConnection().getDBConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, todo.getTitle());
+            stmt.setString(2, todo.getDescription());
+            stmt.setBoolean(3, todo.isCompleted());
+            stmt.setInt(4, todo.getId());
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated == 0) {
+                throw new SQLException("Updating todo failed, no rows affected (ID: " + todo.getId() + ")");
+            }
+        }
+    }
+
 
     // Fetch all todos from the database
     public List<Todo> getAllTodos() throws SQLException {
